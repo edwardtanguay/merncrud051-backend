@@ -128,7 +128,16 @@ const authorizeOnlyIfUnapprovedMember = (req: express.Request, res: express.Resp
 app.get('/get-member-info', authorizeOnlyIfMember, async (req, res) => {
 	const members = await model.getMembers();
 	const memberInfo = {
-		message: "This is information that only members can see. Note that it is not loaded when the site initially loads, but only after the user has been identified (either at login or on page reload while session is still alive) and only when that user has \"members\" in their list of accessGroups.",
+		message: "This is information that only **members** can see. Note that it is not loaded when the site initially loads, but only after the user has been identified (either at login or on page reload while session is still alive) and only when that user has **members** in their list of accessGroups.",
+		members
+	}
+	res.status(200).json(memberInfo);
+});
+
+app.get('/get-admin-info', authorizeOnlyIfAdmin, async (req, res) => {
+	const members = await model.getMembers();
+	const memberInfo = {
+		message: "This is information that only **admins** can see. Note that it is not loaded when the site initially loads, but only after the user has been identified (either at login or on page reload while session is still alive) and only when that user has **admins** in their list of accessGroups.",
 		members
 	}
 	res.status(200).json(memberInfo);
