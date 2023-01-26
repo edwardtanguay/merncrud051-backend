@@ -25,7 +25,7 @@ export const getBooks = async () => {
 }
 
 export const getMembers = async () => {
-	const docFrontendUsers = await User.find({ accessGroups: "members"});
+	const docFrontendUsers = await User.find({ accessGroups: { "$in": ['members', 'unapprovedMembers'] } });
 	const frontendUsers: IFrontendUser[] = [];
 	docFrontendUsers.forEach((docUser:any) => {
 		frontendUsers.push({
