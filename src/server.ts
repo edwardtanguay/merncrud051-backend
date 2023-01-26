@@ -6,6 +6,7 @@ import { IFrontendUser, INewBook } from './interfaces.js';
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import * as tools from './tools.js';
+import { setTimeout } from 'timers';
 
 declare module 'express-session' {
 	export interface SessionData {
@@ -100,21 +101,37 @@ app.get('/logout', (req, res) => {
 
 // PROTECTED ROUTES
 
-const authorizeAsAdmin = (req: express.Request, res: express.Response, next: express.NextFunction) => {
-	if (req.session.user.accessGroups.includes('admins')  as any) {
+const authorizeOnlyIfAdmin = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+	if (req.session.user && req.session.user.accessGroups.includes('admins') as any) {
 		next();
 	} else {
 		res.status(401).send({});
 	}
 }
 
-app.post('/book', authorizeAsAdmin, async (req, res) => {
+const authorizeOnlyIfMember = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+	if (req.session.user && req.session.user.accessGroups.includes('members') as any) {
+		next();
+	} else {
+		res.status(401).send({});
+	}
+}
+
+app.get('/get-member-info', authorizeOnlyIfMember, async (req, res) => {
+	const memberInfo = {
+		message: "This is secret information only for members"
+	}
+	res.status(200).json(memberInfo);
+});
+
+
+app.post('/book', authorizeOnlyIfAdmin, async (req, res) => {
 	const book: INewBook = req.body;
 	const result = await model.addBook(book);
 	res.status(200).send(result);
 });
 
-app.put('/book/:id', authorizeAsAdmin, async (req, res) => {
+app.put('/book/:id', authorizeOnlyIfAdmin, async (req, res) => {
 	const _id = req.params.id;
 	const book: INewBook = req.body;
 	const result = await model.replaceBook(_id, book);
@@ -124,7 +141,7 @@ app.put('/book/:id', authorizeAsAdmin, async (req, res) => {
 	});
 });
 
-app.delete('/book/:id', authorizeAsAdmin, async (req, res) => {
+app.delete('/book/:id', authorizeOnlyIfAdmin, async (req, res) => {
 	const _id = req.params.id;
 	const result = await model.deleteBook(_id);
 	res.status(200).json(result);
