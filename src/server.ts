@@ -55,8 +55,8 @@ app.post('/login', async (req: express.Request, res: express.Response) => {
 	const { username, password } = req.body;
 	const user = await model.getUser(username, password);
 	if (user !== null) {
-		const isCorrect = await tools.passwordIsCorrect(password, user.hash);
-		if (isCorrect) {
+		const passwordIsCorrect = await tools.passwordIsCorrect(password, user.hash);
+		if (passwordIsCorrect) {
 			const frontendUser = {
 				_id: user._id,
 				username: user.username,
@@ -69,18 +69,21 @@ app.post('/login', async (req: express.Request, res: express.Response) => {
 			req.session.save();
 			res.status(200).send(frontendUser);
 		} else {
-			res.status(401).send({});
+			const anonymousUser = await model.getAnonymousUser();
+			res.status(200).send(anonymousUser);
 		}
 	} else {
-		res.status(401).send({});
+		const anonymousUser = await model.getAnonymousUser();
+		res.status(200).send(anonymousUser);
 	}
 });
 
-app.get('/get-current-user', (req: express.Request, res: express.Response) => {
+app.get('/get-current-user', async (req: express.Request, res: express.Response) => {
 	if (req.session.user) {
 		res.send(req.session.user);
 	} else {
-		res.send('anonymousUser');
+		const anonymousUser = await model.getAnonymousUser();
+		res.status(200).send(anonymousUser);
 	}
 });
 
@@ -97,21 +100,21 @@ app.get('/logout', (req, res) => {
 
 // PROTECTED ROUTES
 
-const authorizeUser = (req: express.Request, res: express.Response, next: express.NextFunction) => {
-	if (req.session.user === 'admin' as any) {
+const authorizeAsAdmin = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+	if (req.session.user.accessGroups.includes('admins')  as any) {
 		next();
 	} else {
 		res.status(401).send({});
 	}
 }
 
-app.post('/book', authorizeUser, async (req, res) => {
+app.post('/book', authorizeAsAdmin, async (req, res) => {
 	const book: INewBook = req.body;
 	const result = await model.addBook(book);
 	res.status(200).send(result);
 });
 
-app.put('/book/:id', authorizeUser, async (req, res) => {
+app.put('/book/:id', authorizeAsAdmin, async (req, res) => {
 	const _id = req.params.id;
 	const book: INewBook = req.body;
 	const result = await model.replaceBook(_id, book);
@@ -121,7 +124,7 @@ app.put('/book/:id', authorizeUser, async (req, res) => {
 	});
 });
 
-app.delete('/book/:id', authorizeUser, async (req, res) => {
+app.delete('/book/:id', authorizeAsAdmin, async (req, res) => {
 	const _id = req.params.id;
 	const result = await model.deleteBook(_id);
 	res.status(200).json(result);

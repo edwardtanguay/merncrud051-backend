@@ -29,6 +29,11 @@ export const getUser = async (username: string, password: string) => {
 	return user;
 }
 
+export const getAnonymousUser = async () => {
+	const user = await User.findOne({ username: 'anonymousUser' });
+	return user;
+}
+
 export const getBook = async (_id: string) => {
 	const rawBook = await Book.findOne({ _id });
 	const book = decorateAndSanitizeBook(rawBook);
@@ -44,10 +49,10 @@ export const addBook = async (book: INewBook) => {
 }
 
 export const replaceBook = async (_id: string, changedBook: INewBook) => {
-	const oldBook = await Book.find({ _id});
-    await Book.updateOne({ _id }, {$set: {...changedBook}});
+	const oldBook = await Book.find({ _id });
+	await Book.updateOne({ _id }, { $set: { ...changedBook } });
 	const newBook = await Book.find({ _id });
-	return {oldBook, newBook};
+	return { oldBook, newBook };
 }
 
 export const deleteBook = async (_id: string) => {
