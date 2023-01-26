@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { Book } from './models/Book.js';
 import * as config from './config.js';
-import { IBook, INewBook } from './interfaces.js';
+import { IBook, INewBook, IFrontendUser } from './interfaces.js';
 import { User } from './models/User.js';
 
 mongoose.set('strictQuery', false);
@@ -22,6 +22,21 @@ export const getBooks = async () => {
 		books.push(decorateAndSanitizeBook(docBook));
 	})
 	return books;
+}
+
+export const getMembers = async () => {
+	const docFrontendUsers = await User.find();
+	const frontendUsers: IFrontendUser[] = [];
+	docFrontendUsers.forEach((docUser:any) => {
+		frontendUsers.push({
+			_id: docUser._id,
+			username: docUser.username,
+			firstName: docUser.firstName,
+			lastName: docUser.lastName,
+			accessGroups: docUser.accessGroups
+		});
+	})
+	return frontendUsers;
 }
 
 export const getUser = async (username: string, password: string) => {

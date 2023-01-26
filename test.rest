@@ -51,12 +51,15 @@ POST {{url}}/login
 content-type: application/json
 
 {
-  "username": "edward",
-	"password": "et"
+  "username": "marina",
+	"password": "mm"
 }
 
 ### GET CURRENT USER
 GET {{url}}/get-current-user
+
+### GET MEMBER INFO 
+GET {{url}}/get-member-info
 
 ### LOGOUT
 GET {{url}}/logout

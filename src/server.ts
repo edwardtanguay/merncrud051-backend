@@ -110,6 +110,7 @@ const authorizeOnlyIfAdmin = (req: express.Request, res: express.Response, next:
 }
 
 const authorizeOnlyIfMember = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+	console.log(req.session.user);
 	if (req.session.user && req.session.user.accessGroups.includes('members') as any) {
 		next();
 	} else {
@@ -117,9 +118,26 @@ const authorizeOnlyIfMember = (req: express.Request, res: express.Response, next
 	}
 }
 
+const authorizeOnlyIfUnapprovedMember = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+	if (req.session.user && req.session.user.accessGroups.includes('unapprovedMembers') as any) {
+		next();
+	} else {
+		res.status(401).send({});
+	}
+}
+
 app.get('/get-member-info', authorizeOnlyIfMember, async (req, res) => {
+	const members = await model.getMembers();
 	const memberInfo = {
-		message: "This is secret information only for members"
+		message: "This is information that only members can see. Note that it is not loaded when the site initially loads, but only after the user has been identified (either at login or on page reload while session is still alive) and only when that user has \"members\" in their list of accessGroups.",
+		members
+	}
+	res.status(200).json(memberInfo);
+});
+
+app.get('/get-unapproved-member-info', authorizeOnlyIfUnapprovedMember, async (req, res) => {
+	const memberInfo = {
+		message: "Your membership form has been received. When confirmed, you will have access to this page."
 	}
 	res.status(200).json(memberInfo);
 });
