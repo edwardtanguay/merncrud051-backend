@@ -1,0 +1,52 @@
+[
+	{
+		"username": "anonymousUser",
+		"hash": "",
+		"firstName": "Anonymous",
+		"lastName": "User",
+		"accessGroups": [
+			"loggedOutUsers"
+		]
+	},
+	{
+		"username": "edward",
+		"hash": "CREATE_PASSWORD_HASH",
+		"firstName": "Edward",
+		"lastName": "Tanguay",
+		"accessGroups": [
+			"loggedInUsers",
+			"members",
+			"admins"
+		]
+	},
+	{
+		"username": "marina",
+		"hash": "CREATE_PASSWORD_HASH",
+		"firstName": "Marina",
+		"lastName": "Merryfeld",
+		"accessGroups": [
+			"loggedInUsers",
+			"members"
+		]
+	},
+	{
+		"username": "victor",
+		"hash": "CREATE_PASSWORD_HASH",
+		"firstName": "Victor",
+		"lastName": "Verreldo",
+		"accessGroups": [
+			"loggedInUsers",
+			"members"
+		]
+	},
+	{
+		"username": "miki",
+		"hash": "CREATE_PASSWORD_HASH",
+		"firstName": "Miki",
+		"lastName": "Merrolda",
+		"accessGroups": [
+			"loggedInUsers",
+			"unapprovedMembers"
+		]
+	}
+]
