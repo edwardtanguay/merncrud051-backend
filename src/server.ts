@@ -110,7 +110,6 @@ const authorizeOnlyIfAdmin = (req: express.Request, res: express.Response, next:
 }
 
 const authorizeOnlyIfMember = (req: express.Request, res: express.Response, next: express.NextFunction) => {
-	console.log(req.session.user);
 	if (req.session.user && req.session.user.accessGroups.includes('members') as any) {
 		next();
 	} else {
