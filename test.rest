@@ -1,4 +1,4 @@
-@url = http://localhost:3100
+@url = http://localhost:3200
 
 ### GET INFO
 GET {{url}}
@@ -52,7 +52,7 @@ content-type: application/json
 
 {
   "username": "victor",
-	"password": "vv000"
+	"password": "vv"
 }
 
 ### GET CURRENT USER
