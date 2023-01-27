@@ -3,6 +3,7 @@ import { Book } from './models/Book.js';
 import * as config from './config.js';
 import { IBook, INewBook, IFrontendUser } from './interfaces.js';
 import { User } from './models/User.js';
+import * as model from './model.js';
 
 mongoose.set('strictQuery', false);
 mongoose.connect(config.MONGODB_CONNECTION);
@@ -74,6 +75,13 @@ export const deleteBook = async (_id: string) => {
 	const result = await Book.deleteOne({ _id });
 	return result;
 }
+
+export const approveMember = async (_id: string) => {
+	const user = await User.findOne({ _id });
+	user.accessGroups = user.accessGroups.map(m => m === 'unapprovedMembers' ? 'members' : m)
+	await user.save();
+}
+
 
 export const getApiInstructions = () => {
 	return `

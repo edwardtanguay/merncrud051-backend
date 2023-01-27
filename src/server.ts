@@ -18,7 +18,7 @@ const app = express();
 app.use(express.json());
 app.use(cors({
 	origin: config.FRONTEND_URL,
-	methods: ['POST', 'GET', 'DELETE', 'PUT', 'OPTIONS', 'HEAD'],
+	methods: ['POST', 'GET', 'DELETE', 'PUT', 'PATCH', 'OPTIONS', 'HEAD'],
 	credentials: true
 }));
 app.use(cookieParser());
@@ -150,6 +150,11 @@ app.get('/get-unapproved-member-info', authorizeOnlyIfUnapprovedMember, async (r
 	res.status(200).json(memberInfo);
 });
 
+app.patch('/approve-member', authorizeOnlyIfAdmin, async (req, res) => {
+	const _id: string = req.body;
+	const result = await model.approveMember(_id);
+	res.status(200).send(result);
+});
 
 app.post('/book', authorizeOnlyIfAdmin, async (req, res) => {
 	const book: INewBook = req.body;

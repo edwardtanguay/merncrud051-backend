@@ -51,8 +51,8 @@ POST {{url}}/login
 content-type: application/json
 
 {
-  "username": "marina",
-	"password": "mm"
+  "username": "edward",
+	"password": "et"
 }
 
 ### GET CURRENT USER
@@ -63,3 +63,11 @@ GET {{url}}/get-member-info
 
 ### LOGOUT
 GET {{url}}/logout
+
+### APPROVE UNAPPROVED MEMBER
+PATCH {{url}}/approve-member
+content-type: application/json
+
+{
+  "_id": "63d23ce3008f3958bf884155"
+}
